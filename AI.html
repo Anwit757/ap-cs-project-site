@@ -1,92 +1,108 @@
-  <html>
+<html>
 
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Anwit's Projects</title>
-    <link href="reset.css" rel="stylesheet" type="text/css">
-    <link href="style.css" rel="stylesheet" type="text/css">
-  </head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Anwit's Projects</title>
+  <link href="reset.css" rel="stylesheet" type="text/css">
+  <link href="style.css" rel="stylesheet" type="text/css">
+</head>
 
-  <body>
-    <header>
-      <h1>Anwit's Projects</h1>
-      <nav>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li>|</li>
-          <li><a href="aboutme.html">About Me</a></li>
-          <li>|</li>
-          <li><a href="AI.html">AI</a></li>
+<body>
+  <header>
+    <h1>Anwit's Projects</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li>|</li>
+        <li><a href="aboutme.html">About Me</a></li>
+        <li>|</li>
+        <li><a href="AI.html">AI</a></li>
+        <li>|</li>
+        <li><a href="AP App.html">Embedded App</a></li>
 
-        </ul>
-      </nav>
-    </header>
+      </ul>
+    </nav>
+  </header>
 
-    <div>Anwit Prasai Ai Project</div>
-    <script src="https://cdn.jsdelivr.net/npm/p5@latest/lib/p5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p5@latest/lib/addons/p5.dom.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ml5@latest/dist/ml5.min.js"></script>
-    <script type="text/javascript">
-      // Classifier Variable
-      let classifier;
-      // Model URL
-      let imageModelURL = 'https://teachablemachine.withgoogle.com/models/GAnY1NL6d/';
 
-      // Video
-      let video;
-      let flippedVideo;
-      // To store the classification
-      let label = "Bottle";
 
-      // Load the model first
-      function preload() {
-        classifier = ml5.imageClassifier(imageModelURL + 'model.json');
+
+  <div id="aboutme">
+    <h2>Anwit Prasai AI Project</h2>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/p5@latest/lib/p5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/p5@latest/lib/addons/p5.dom.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ml5@latest/dist/ml5.min.js"></script>
+  <script type="text/javascript">
+    // Classifier Variable
+    let classifier;
+    // Model URL
+    let imageModelURL = './my_model/';
+
+    // Video
+    let video;
+    let flippedVideo;
+    // To store the classification
+    let label = "";
+
+    // Load the model first
+    function preload() {
+      classifier = ml5.imageClassifier(imageModelURL + 'model.json');
+    }
+
+    function setup() {
+      createCanvas(320, 260);
+      // Create the video
+      video = createCapture(VIDEO);
+      video.size(320, 240);
+      video.hide();
+
+      flippedVideo = ml5.flipImage(video);
+      // Start classifying
+      classifyVideo();
+    }
+
+    function draw() {
+      background(0);
+      // Draw the video
+      image(flippedVideo, 0, 0);
+
+      // Draw the label
+      fill(255);
+      textSize(16);
+      textAlign(CENTER);
+      text(label, width / 2, height - 4);
+    }
+
+    // Get a prediction for the current video frame
+    function classifyVideo() {
+      flippedVideo = ml5.flipImage(video)
+      classifier.classify(flippedVideo, gotResult);
+      flippedVideo.remove();
+
+    }
+
+    // When we get a result
+    function gotResult(error, results) {
+      // If there is an error
+      if (error) {
+        console.error(error);
+        return;
       }
+      // The results are in an array ordered by confidence.
+      // console.log(results[0]);
+      label = results[0].label;
+      // Classifiy again!
+      classifyVideo();
+    }
+  </script>
 
-      function setup() {
-        createCanvas(320, 260);
-        // Create the video
-        video = createCapture(VIDEO);
-        video.size(320, 240);
-        video.hide();
+  <p>
+    This is my AI project. In this project, I taught a model to find out the difference between a bottle, lotion, and a
+    protein milk. How it works - Whatever item you put on camera, the model will be able to figure out the item and tell
+    you what item you are holding up.
+  </p>
+</body>
 
-        flippedVideo = ml5.flipImage(video);
-        // Start classifying
-        classifyVideo();
-      }
-
-      function draw() {
-        background(0);
-        // Draw the video
-        image(flippedVideo, 0, 0);
-
-        // Draw the label
-        fill(255);
-        textSize(16);
-        textAlign(CENTER);
-        text(label, width / 2, height - 4);
-      }
-
-      // Get a prediction for the current video frame
-      function classifyVideo() {
-        flippedVideo = ml5.flipImage(video)
-        classifier.classify(flippedVideo, gotResult);
-        flippedVideo.remove();
-
-      }
-
-      // When we get a result
-      function gotResult(error, results) {
-        // If there is an error
-        if (error) {
-          console.error(error);
-          return;
-        }
-        // The results are in an array ordered by confidence.
-        // console.log(results[0]);
-        label = results[0].label;
-        // Classifiy again!
-        classifyVideo();
-      }
-    </script>
+</html>
